@@ -1,4 +1,4 @@
 .env
-sqlalchemy_example
+sqlalchemy_example.db
 myenv
 app/__pycache__

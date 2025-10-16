@@ -41,6 +41,30 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
 
     return new_task
 
+@router.put('/tasks/{taskId}', response_model=schemas.TaskUpdate)
+def update_task(taskId: int, task: schemas.TaskUpdate, db: Session = Depends(get_db)):
+    task_query = db.query(models.Task).filter(models.Task.id == taskId)
+    db_task = task_query.first()
+
+    if not db_task:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail=f'No note with this id: {taskId} found')
+    
+    update_data = task.model_dump(exclude_unset=True)
+
+    if 'title' in update_data:
+        existing_title = db.query(models.Task).filter(
+            models.Task.title == update_data['title'],
+            models.Task.id != taskId
+        ).first()
+        if existing_title:
+            raise HTTPException(status_code=400, detail="Another task with this title already exists.")
+        
+        task_query.update(update_data, synchronize_session=False)
+        db.commit()
+        db.refresh(db_task)
+        return db_task
+
 @router.delete('/tasks/{taskId}')
 def delete_task(taskId: int, db: Session = Depends(get_db)):
     task_query = db.query(models.Task).filter(models.Task.id == taskId)
