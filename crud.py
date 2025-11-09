@@ -1,8 +1,9 @@
-from . import schemas, models
+import schemas, models
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status, APIRouter, Response, Query
 from sqlalchemy.exc import IntegrityError
-from .database import get_db
+from database import get_db
+from ml.inference import predict_priority
 
 router = APIRouter()
 
@@ -27,6 +28,7 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     new_task = models.Task(
         title = task.title,
         description = task.description,
+        priority = task.priority,
         is_done = task.is_done
     )
 
@@ -77,6 +79,13 @@ def delete_task(taskId: int, db: Session = Depends(get_db)):
     task_query.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.post("/predict-priority/")
+def predict_priority_api(req: schemas.PredictRequest, db: Session = Depends(get_db)):
+    text = req.title + " " + (req.description or "")
+    pred = predict_priority(db, text, task_id=1)
+    return {"predicted_priority": pred}
+
 
 
 

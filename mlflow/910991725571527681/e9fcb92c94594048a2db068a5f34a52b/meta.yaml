@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/dungtk/Documents/genestory/genestory_code_assignment/mlflow/910991725571527681/e9fcb92c94594048a2db068a5f34a52b/artifacts
+end_time: 1762702047495
+entry_point_name: ''
+experiment_id: '910991725571527681'
+lifecycle_stage: active
+run_id: e9fcb92c94594048a2db068a5f34a52b
+run_name: logreg_tfidf
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762702047402
+status: 3
+tags: []
+user_id: Dung Tran

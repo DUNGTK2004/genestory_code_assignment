@@ -1,7 +1,7 @@
-from app import models, crud
+import models, crud
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, get_db
+from database import engine, get_db
 from dotenv import load_dotenv
 import os
 import requests 

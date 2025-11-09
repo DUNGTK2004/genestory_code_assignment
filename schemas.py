@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class TaskBaseSchema(BaseModel):
     title: str = None
     description: str = None
+    priority: str | None = None # "Low", "Medium", "high"
     is_done: bool = False
 
 class TaskCreate(TaskBaseSchema):
@@ -19,6 +20,10 @@ class Task(TaskBaseSchema):
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
+
+class PredictRequest(BaseModel):
+    title: str
+    description: str | None = None
     
 
 

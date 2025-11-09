@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/dungtk/Documents/genestory/genestory_code_assignment/mlflow/922299336513761353/0b8aa6c1e9454b489399933f111e114f/artifacts
+end_time: 1762702988868
+entry_point_name: ''
+experiment_id: '922299336513761353'
+lifecycle_stage: active
+run_id: 0b8aa6c1e9454b489399933f111e114f
+run_name: inference
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762702988802
+status: 4
+tags: []
+user_id: Dung Tran
