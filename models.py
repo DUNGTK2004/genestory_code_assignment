@@ -8,7 +8,7 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
     priority = Column(String, nullable=True)
-    is_done = Column(Boolean, nullable=True, server_default='False')
+    is_done = Column(Boolean, nullable=True, default=False)
 
 class PredictionLog(Base):
     __tablename__ = "prediction_log"
