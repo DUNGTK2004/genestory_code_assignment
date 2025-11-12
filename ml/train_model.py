@@ -1,4 +1,5 @@
 import sys, os
+import random
 import pickle, mlflow, mlflow.sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -13,6 +14,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database import SessionLocal
 from models import Task
+
+# Set seed cho việc tái lập kết quả
+SEED = 42
+random.seed(SEED)
 
 # Thiết lập MLflow
 mlflow.set_tracking_uri("file:../mlflow")
@@ -29,13 +34,13 @@ labels = [t.priority for t in tasks]
 
 print(labels)
 # Chia dữ liệu 
-X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2, random_state=SEED)
 
 # Thử nghiệm với nhiều mô hình
 models_to_run = [
-    ("LogisticRegression", LogisticRegression(max_iter=200)),
-    ("MultinomialNB", MultinomialNB()),
-    ("ComplementNB", ComplementNB())
+    ("LogisticRegression", LogisticRegression(max_iter=200, random_state=SEED)),
+    ("MultinomialNB", MultinomialNB(random_state=SEED)),
+    ("ComplementNB", ComplementNB(random_state=SEED))
 ]
 
 for model_name, model in models_to_run:
@@ -44,6 +49,7 @@ for model_name, model in models_to_run:
         mlflow.log_param("model_type", model_name)
         mlflow.log_param("vectorizer", "TF-IDF")
         mlflow.log_param("test_split", 0.2)
+        mlflow.log_param("random_seed", SEED)
 
         # transform data cho huấn luyện
         vectorizer = TfidfVectorizer()

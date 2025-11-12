@@ -82,8 +82,17 @@ def delete_task(taskId: int, db: Session = Depends(get_db)):
 
 @router.post("/predict-priority/")
 def predict_priority_api(req: schemas.PredictRequest, db: Session = Depends(get_db)):
-    text = req.title + " " + (req.description or "")
-    pred = predict_priority(db, text, task_id=1)
+
+    """
+    Predict the priority of a task based on its title and description.
+
+    Args:
+        req (schemas.PredictRequest): Request body containing title, description, and model name.
+
+    Returns:
+        dict: A dictionary containing the predicted priority.
+    """
+    pred = predict_priority(db, req.title, req.description, task_id=1, auto_assign=True, model_name=req.model_name)
     return {"predicted_priority": pred}
 
 
