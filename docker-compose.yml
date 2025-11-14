@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  fastapi-mlflow:
+    build: .
+    container_name: fastapi-mlflow-app
+    ports:
+      - "8080:8000"
+      - "5050:5000"
+    volumes:
+      - ./sqlalchemy_example.db:/app/sqlalchemy_example.db
+      - ./mlflow:/app/mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:5000
+    command: >
+      bash -c "
+      uvicorn main:app --host 0.0.0.0 --port 8000 & \
+      mlflow ui --backend-store-uri file:./mlflow \
+      --default-artifact-root ./mlflow \
+      --host 0.0.0.0 --port 5000 && wait"

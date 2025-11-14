@@ -39,8 +39,8 @@ X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2
 # Thử nghiệm với nhiều mô hình
 models_to_run = [
     ("LogisticRegression", LogisticRegression(max_iter=200, random_state=SEED)),
-    ("MultinomialNB", MultinomialNB(random_state=SEED)),
-    ("ComplementNB", ComplementNB(random_state=SEED))
+    ("MultinomialNB", MultinomialNB()),
+    ("ComplementNB", ComplementNB())
 ]
 
 for model_name, model in models_to_run:

@@ -2,5 +2,7 @@ fastapi
 uvicorn
 sqlalchemy
 pydantic
-dotenv
-request
+python-dotenv
+requests
+mlflow
+scikit-learn
