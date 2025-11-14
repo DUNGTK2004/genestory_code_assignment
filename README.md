@@ -1,80 +1,110 @@
-# 🗂️ FastAPI Task Manager
+# FastAPI Task Manager + MLflow (Assignment 2)
 
-## 🧩 Giới thiệu
+Dự án mở rộng Task Manager từ Assignment 1 bằng cách tích hợp mô hình Machine Learning để dự đoán mức độ ưu tiên của task ("Low", "Medium", "High") và sử dụng MLflow để theo dõi toàn bộ quá trình huấn luyện – inference.
 
-Dự án này là một **Task Manager API** được xây dựng bằng **[FastAPI](https://fastapi.tiangolo.com/)** — một web framework hiện đại, nhanh và dễ dùng cho Python.  
-Ứng dụng sử dụng **SQLite** làm cơ sở dữ liệu nhẹ để lưu trữ danh sách các công việc (“tasks”).  
+## 🚀 Features
 
----
+* CRUD Task API bằng FastAPI
+* Dự đoán priority từ `title + description`
+* Mô hình ML (TF-IDF + Logistic Regression hoặc Naive Bayes)
+* Tracking đầy đủ bằng MLflow:
+  * parameters
+  * metrics
+  * artifacts
+  * run ID
+* Ghi log dự đoán vào SQLite (PredictionLog)
+* Lưu mô hình tại `ml/model.pkl`
 
-## 🎯 Mục tiêu dự án
-
-Mục đích của bài tập này là giúp bạn thực hành cách xây dựng **REST API** với FastAPI kết hợp cùng **SQLAlchemy ORM** và **Pydantic**, thông qua việc phát triển một ứng dụng quản lý công việc đơn giản.  
-
-### 🧠 Sau khi hoàn thành, bạn sẽ nắm được:
-- Cách tạo RESTful API bằng FastAPI.  
-- Cách định nghĩa **SQLAlchemy ORM models** và kết nối với cơ sở dữ liệu SQLite.  
-- Sử dụng **Pydantic schemas** cho việc xác thực request và định dạng response.  
-- Triển khai đầy đủ các thao tác **CRUD (Create, Read, Update, Delete)** qua API endpoints.  
-- Hiểu được cấu trúc cơ bản của một dự án FastAPI dạng module.  
-
----
-
-# 🚀 Hướng dẫn chạy dự án FastAPI
-
-## 1️⃣ Tạo môi trường ảo
-
-Tạo môi trường ảo tên **myenv**:
-
-```bash
-python -m venv myenv
+## 📦 Project Structure
+```
+fastapi-task-manager/
+├── main.py
+├── database.py
+├── models.py
+├── schemas.py
+├── crud.py
+│
+├── ml/
+│   ├── train_model.py
+│   ├── inference.py
+│   ├── model.pkl
+│
+├── mlflow/
+│   └── mlruns/
+│
+├── tasks.db
+└── requirements.txt
 ```
 
-Kích hoạt môi trường ảo:
+## ⚙️ Installation
 
-- **Windows:**
-  ```bash
-  myenv\Scripts\activate
-  ```
-- **macOS / Linux:**
-  ```bash
-  source myenv/bin/activate
-  ```
-
----
-
-## 2️⃣ Cài đặt các phụ thuộc
-
-Sau khi kích hoạt môi trường ảo, cài đặt các thư viện cần thiết:
-
+### 1. Install requirements
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-## 3️⃣ Chạy ứng dụng FastAPI
-
-Khởi động server bằng **Uvicorn**:
-
+### 2. Start MLflow UI
 ```bash
-uvicorn app.main:app --reload
+mlflow ui
 ```
 
-Sau khi chạy, mở trình duyệt và truy cập địa chỉ:
+→ http://127.0.0.1:5000
 
-👉 [http://127.0.0.1:8000](http://127.0.0.1:8000)
+## 🧠 Training the Model
 
----
+Chạy script huấn luyện:
+```bash
+python ml/train_model.py
+```
 
-## 4️⃣ Xem tài liệu API
+Script sẽ:
+* load dữ liệu từ SQLite
+* TF-IDF vector hóa
+* train model
+* log parameters/metrics lên MLflow
+* lưu mô hình vào `ml/model.pkl`
 
-FastAPI tự động sinh ra tài liệu API tại:
+## 🔮 Prediction API
 
-- **Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)  
-- **ReDoc:** [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+### Endpoint
+```
+POST /predict-priority/
+```
 
----
+### Request
+```json
+{
+  "title": "Fix API error",
+  "description": "Server returns 500 frequently"
+}
+```
 
-✅ **Hoàn tất!**  
-Giờ bạn có thể bắt đầu phát triển, kiểm thử và mở rộng API Task Manager của mình. 🚀
+### Response
+```json
+{
+  "predicted_priority": "High"
+}
+```
+
+Khi dự đoán:
+* Model được load từ `ml/model.pkl`
+* Lưu log vào bảng `PredictionLog`
+* Log inference lên MLflow
+
+## ▶️ Running the Application
+
+### Start FastAPI
+```bash
+uvicorn main:app --reload
+```
+
+### API Docs
+
+http://127.0.0.1:8000/docs
+
+## 📝 Notes
+
+* Dataset gồm các task được lưu trong SQLite.
+* Chỉ train trên các task chưa hoàn thành (`is_done = False`).
+* Text input = `title + description`.
+* Mỗi lần train tạo 1 MLflow run mới → xem lịch sử trong UI.
